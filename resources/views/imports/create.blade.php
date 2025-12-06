@@ -1,0 +1,267 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Novo Processo de Importação') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-4 text-gray-900">
+                    <form method="POST" action="{{ route('imports.store') }}">
+                        @csrf
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <x-input-label for="client_id" :value="__('Cliente')" />
+                                <select id="client_id" name="client_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                    <option value="">Selecione um cliente</option>
+                                    @foreach($clients as $client)
+                                        <option value="{{ $client->id }}" {{ old('client_id') == $client->id ? 'selected' : '' }}>
+                                            {{ $client->nome_fantasia }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('client_id')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="responsavel_interno_id" :value="__('Responsável Interno')" />
+                                <select id="responsavel_interno_id" name="responsavel_interno_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="">Sem responsável definido</option>
+                                    @foreach($users as $user)
+                                        <option value="{{ $user->id }}" {{ old('responsavel_interno_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <x-input-error :messages="$errors->get('responsavel_interno_id')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="numero_processo" :value="__('Número do Processo')" />
+                                <x-text-input id="numero_processo" class="block mt-1 w-full" type="text" name="numero_processo" :value="old('numero_processo')" required />
+                                <x-input-error :messages="$errors->get('numero_processo')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="modal" :value="__('Modal')" />
+                                <select id="modal" name="modal" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>
+                                    <option value="">Selecione o modal</option>
+                                    <option value="maritimo" {{ old('modal') == 'maritimo' ? 'selected' : '' }}>Marítimo</option>
+                                    <option value="aereo" {{ old('modal') == 'aereo' ? 'selected' : '' }}>Aéreo</option>
+                                    <option value="rodoviario" {{ old('modal') == 'rodoviario' ? 'selected' : '' }}>Rodoviário</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('modal')" class="mt-2" />
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <x-input-label for="descricao_mercadoria" :value="__('Descrição da Mercadoria')" />
+                                <x-text-input id="descricao_mercadoria" class="block mt-1 w-full" type="text" name="descricao_mercadoria" :value="old('descricao_mercadoria')" required />
+                                <x-input-error :messages="$errors->get('descricao_mercadoria')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="pais_origem" :value="__('País de Origem')" />
+                                <x-text-input id="pais_origem" class="block mt-1 w-full" type="text" name="pais_origem" :value="old('pais_origem')" />
+                                <x-input-error :messages="$errors->get('pais_origem')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="porto_origem" :value="__('Porto de Origem')" />
+                                <x-text-input id="porto_origem" class="block mt-1 w-full" type="text" name="porto_origem" :value="old('porto_origem')" />
+                                <x-input-error :messages="$errors->get('porto_origem')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="porto_destino" :value="__('Porto de Destino')" />
+                                <x-text-input id="porto_destino" class="block mt-1 w-full" type="text" name="porto_destino" :value="old('porto_destino')" />
+                                <x-input-error :messages="$errors->get('porto_destino')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="valor_fatura" :value="__('Valor da Fatura')" />
+                                <x-text-input id="valor_fatura" class="block mt-1 w-full" type="text" name="valor_fatura_display" :value="old('valor_fatura') ? number_format((float)old('valor_fatura'), 2, ',', '.') : ''" placeholder="0,00" />
+                                <input type="hidden" id="valor_fatura_hidden" name="valor_fatura" value="{{ old('valor_fatura') }}" />
+                                <x-input-error :messages="$errors->get('valor_fatura')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="moeda" :value="__('Moeda')" />
+                                <select id="moeda" name="moeda" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" onchange="handleMoedaChange()">
+                                    <option value="BRL" {{ old('moeda', 'USD') == 'BRL' ? 'selected' : '' }}>BRL - Real Brasileiro</option>
+                                    <option value="USD" {{ old('moeda', 'USD') == 'USD' ? 'selected' : '' }}>USD - Dólar Americano</option>
+                                    <option value="EUR" {{ old('moeda', 'USD') == 'EUR' ? 'selected' : '' }}>EUR - Euro</option>
+                                    <option value="JPY" {{ old('moeda', 'USD') == 'JPY' ? 'selected' : '' }}>JPY - Iene Japonês</option>
+                                    <option value="GBP" {{ old('moeda', 'USD') == 'GBP' ? 'selected' : '' }}>GBP - Libra Esterlina</option>
+                                    <option value="CNY" {{ old('moeda', 'USD') == 'CNY' ? 'selected' : '' }}>CNY - Yuan Chinês</option>
+                                    <option value="CHF" {{ old('moeda', 'USD') == 'CHF' ? 'selected' : '' }}>CHF - Franco Suíço</option>
+                                    <option value="CAD" {{ old('moeda', 'USD') == 'CAD' ? 'selected' : '' }}>CAD - Dólar Canadense</option>
+                                    <option value="AUD" {{ old('moeda', 'USD') == 'AUD' ? 'selected' : '' }}>AUD - Dólar Australiano</option>
+                                    <option value="ARS" {{ old('moeda', 'USD') == 'ARS' ? 'selected' : '' }}>ARS - Peso Argentino</option>
+                                    <option value="MXN" {{ old('moeda', 'USD') == 'MXN' ? 'selected' : '' }}>MXN - Peso Mexicano</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('moeda')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="taxa_cambio" :value="__('Taxa de câmbio (1 moeda = X BRL)')" />
+                                <x-text-input id="taxa_cambio" class="block mt-1 w-full" type="text" name="taxa_cambio_display" :value="old('taxa_cambio') ? number_format((float)old('taxa_cambio'), 4, ',', '.') : (old('moeda', 'USD') == 'BRL' ? '1,0000' : '')" placeholder="Ex.: 5,40 se 1 USD = 5,40 BRL" />
+                                <input type="hidden" id="taxa_cambio_hidden" name="taxa_cambio" value="{{ old('taxa_cambio', old('moeda', 'USD') == 'BRL' ? '1.0000' : '') }}" />
+                                <p class="mt-1 text-sm text-gray-500">Obrigatório quando a moeda não for BRL</p>
+                                <x-input-error :messages="$errors->get('taxa_cambio')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="data_abertura" :value="__('Data de Abertura')" />
+                                <x-text-input id="data_abertura" class="block mt-1 w-full" type="date" name="data_abertura" :value="old('data_abertura')" required />
+                                <x-input-error :messages="$errors->get('data_abertura')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="data_prevista_chegada" :value="__('Data Prevista de Chegada')" />
+                                <x-text-input id="data_prevista_chegada" class="block mt-1 w-full" type="date" name="data_prevista_chegada" :value="old('data_prevista_chegada')" />
+                                <x-input-error :messages="$errors->get('data_prevista_chegada')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="status_atual" :value="__('Status Atual')" />
+                                <select id="status_atual" name="status_atual" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                                    <option value="aberto" {{ old('status_atual', 'aberto') == 'aberto' ? 'selected' : '' }}>Aberto</option>
+                                    <option value="em_transito" {{ old('status_atual') == 'em_transito' ? 'selected' : '' }}>Em Trânsito</option>
+                                    <option value="em_desembaraco" {{ old('status_atual') == 'em_desembaraco' ? 'selected' : '' }}>Em Desembaraço</option>
+                                    <option value="concluido" {{ old('status_atual') == 'concluido' ? 'selected' : '' }}>Concluído</option>
+                                    <option value="cancelado" {{ old('status_atual') == 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('status_atual')" class="mt-2" />
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <x-input-label for="observacoes" :value="__('Observações')" />
+                                <textarea id="observacoes" name="observacoes" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" rows="4">{{ old('observacoes') }}</textarea>
+                                <x-input-error :messages="$errors->get('observacoes')" class="mt-2" />
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-end mt-4">
+                            <a href="{{ route('imports.index') }}" class="text-gray-600 hover:text-gray-900 mr-4">Voltar</a>
+                            <x-primary-button>
+                                {{ __('Salvar') }}
+                            </x-primary-button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const valorFaturaInput = document.getElementById('valor_fatura');
+            const valorFaturaHidden = document.getElementById('valor_fatura_hidden');
+
+            if (valorFaturaInput && valorFaturaHidden) {
+                valorFaturaInput.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    
+                    // Remove tudo que não é número ou vírgula
+                    value = value.replace(/[^\d,]/g, '');
+                    
+                    // Se tiver mais de uma vírgula, mantém apenas a primeira
+                    const parts = value.split(',');
+                    if (parts.length > 2) {
+                        value = parts[0] + ',' + parts.slice(1).join('');
+                    }
+                    
+                    // Limita a 2 casas decimais após a vírgula
+                    if (parts.length === 2 && parts[1].length > 2) {
+                        value = parts[0] + ',' + parts[1].substring(0, 2);
+                    }
+                    
+                    // Formata com pontos para milhares
+                    if (parts.length > 0) {
+                        const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        value = parts.length > 1 ? integerPart + ',' + parts[1] : integerPart;
+                    }
+                    
+                    // Atualiza o campo visível
+                    e.target.value = value;
+                    
+                    // Atualiza o campo hidden com valor numérico (sem formatação)
+                    const numericValueForSubmit = value.replace(/\./g, '').replace(',', '.');
+                    valorFaturaHidden.value = numericValueForSubmit || '';
+                });
+
+                // Ao enviar o formulário, garante que o valor está correto
+                const form = valorFaturaInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const displayValue = valorFaturaInput.value;
+                        const numericValue = displayValue.replace(/\./g, '').replace(',', '.');
+                        valorFaturaHidden.value = numericValue || '';
+                    });
+                }
+            }
+
+            // Formatação do campo de taxa de câmbio
+            const taxaCambioInput = document.getElementById('taxa_cambio');
+            const taxaCambioHidden = document.getElementById('taxa_cambio_hidden');
+            const moedaSelect = document.getElementById('moeda');
+
+            if (taxaCambioInput && taxaCambioHidden && moedaSelect) {
+                // Formatação de entrada
+                taxaCambioInput.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    value = value.replace(/[^\d,]/g, '');
+                    const parts = value.split(',');
+                    if (parts.length > 2) {
+                        value = parts[0] + ',' + parts.slice(1).join('');
+                    }
+                    if (parts.length === 2 && parts[1].length > 4) {
+                        value = parts[0] + ',' + parts[1].substring(0, 4);
+                    }
+                    if (parts.length > 0) {
+                        const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                        value = parts.length > 1 ? integerPart + ',' + parts[1] : integerPart;
+                    }
+                    e.target.value = value;
+                    const numericValueForSubmit = value.replace(/\./g, '').replace(',', '.');
+                    taxaCambioHidden.value = numericValueForSubmit || '';
+                });
+
+                // Função para lidar com mudança de moeda
+                window.handleMoedaChange = function() {
+                    const moeda = moedaSelect.value;
+                    if (moeda === 'BRL') {
+                        taxaCambioInput.value = '1,0000';
+                        taxaCambioHidden.value = '1.0000';
+                        taxaCambioInput.disabled = true;
+                        taxaCambioInput.classList.add('bg-gray-100');
+                    } else {
+                        taxaCambioInput.disabled = false;
+                        taxaCambioInput.classList.remove('bg-gray-100');
+                        if (!taxaCambioInput.value) {
+                            taxaCambioInput.value = '';
+                            taxaCambioHidden.value = '';
+                        }
+                    }
+                }
+
+                // Executar ao carregar a página
+                handleMoedaChange();
+
+                // Ao enviar o formulário
+                const form = taxaCambioInput.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const displayValue = taxaCambioInput.value;
+                        const numericValue = displayValue.replace(/\./g, '').replace(',', '.');
+                        taxaCambioHidden.value = numericValue || '';
+                    });
+                }
+            }
+        });
+    </script>
+</x-app-layout>
+
