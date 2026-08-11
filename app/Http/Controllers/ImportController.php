@@ -7,7 +7,6 @@ use App\Http\Requests\StoreImportRequest;
 use App\Http\Requests\UpdateImportRequest;
 use App\Models\Client;
 use App\Models\Import;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class ImportController extends Controller
@@ -54,9 +53,8 @@ class ImportController extends Controller
         $this->authorize('create', Import::class);
 
         $clients = Client::orderBy('nome_cliente')->get();
-        $users = User::orderBy('name')->get();
 
-        return view('imports.create', compact('clients', 'users'));
+        return view('imports.create', compact('clients'));
     }
 
     public function store(StoreImportRequest $request)
@@ -83,9 +81,8 @@ class ImportController extends Controller
         $this->authorize('update', $import);
 
         $clients = Client::orderBy('nome_cliente')->get();
-        $users = User::orderBy('name')->get();
 
-        return view('imports.edit', compact('import', 'clients', 'users'));
+        return view('imports.edit', compact('import', 'clients'));
     }
 
     public function update(UpdateImportRequest $request, Import $import)

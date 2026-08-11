@@ -17,8 +17,6 @@ class ImportFactory extends Factory
      */
     public function definition(): array
     {
-        $moeda = fake()->randomElement(['USD', 'EUR', 'BRL']);
-
         return [
             'numero_processo' => fake()->unique()->numerify('IMP-#######'),
             'client_id' => Client::factory(),
@@ -26,11 +24,8 @@ class ImportFactory extends Factory
             'ncm_principal' => fake()->optional()->numerify('####.##.##'),
             'descricao_mercadoria' => fake()->sentence(),
             'pais_origem' => fake()->optional()->country(),
-            'porto_origem' => fake()->optional()->city(),
-            'porto_destino' => fake()->optional()->city(),
             'valor_fatura' => fake()->optional()->randomFloat(2, 1000, 1000000),
-            'moeda' => $moeda,
-            'taxa_cambio' => $moeda === 'BRL' ? 1.0 : fake()->randomFloat(4, 4, 6),
+            'moeda' => fake()->randomElement(['USD', 'EUR', 'BRL']),
             'data_abertura' => fake()->date(),
             'data_prevista_chegada' => fake()->optional()->date(),
             'status_atual' => fake()->randomElement(['aberto', 'em_transito', 'em_desembaraco', 'concluido', 'cancelado']),

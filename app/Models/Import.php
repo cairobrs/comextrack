@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Modelo Import - Representa um processo de importação.
- * 
+ *
  * Ao criar um processo, são criados automaticamente 4 documentos padrão e 4 custos padrão.
  * O status é atualizado automaticamente por observers baseado em documentos e custos.
  */
@@ -21,16 +21,12 @@ class Import extends Model
     protected $fillable = [
         'numero_processo',
         'client_id',
-        'responsavel_interno_id',
         'modal',
         'ncm_principal',
         'descricao_mercadoria',
         'pais_origem',
-        'porto_origem',
-        'porto_destino',
         'valor_fatura',
         'moeda',
-        'taxa_cambio',
         'data_abertura',
         'data_prevista_chegada',
         'status_atual',
@@ -41,7 +37,6 @@ class Import extends Model
         'data_abertura' => 'date',
         'data_prevista_chegada' => 'date',
         'valor_fatura' => 'float',
-        'taxa_cambio' => 'float',
     ];
 
     protected static function booted()
@@ -82,11 +77,6 @@ class Import extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function responsavelInterno(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'responsavel_interno_id');
-    }
-
     public function logs(): HasMany
     {
         return $this->hasMany(ImportLog::class)->orderBy('created_at', 'desc');
@@ -117,33 +107,6 @@ class Import extends Model
         return $this->hasMany(ImportCost::class);
     }
 
-    // Retorna o valor da fatura convertido para reais usando taxa de câmbio informada
-    public function getValorFaturaEmReaisAttribute(): ?float
-    {
-        if ($this->valor_fatura === null) {
-            return null;
-        }
-
-        if ($this->moeda === 'BRL') {
-            return $this->valor_fatura;
-        }
-
-        $taxa = $this->taxa_cambio ?? 1;
-        return $this->valor_fatura * $taxa;
-    }
-
-    // Indica se é processo de alto valor (acima de R$ 500.000)
-    public function getIsHighValueAttribute(): bool
-    {
-        $valorEmReais = $this->valor_fatura_em_reais;
-
-        if ($valorEmReais === null) {
-            return false;
-        }
-
-        return $valorEmReais > 500000;
-    }
-
     public function scopeAbertas($query)
     {
         return $query->whereNotIn('status_atual', ['concluido', 'cancelado']);
@@ -151,7 +114,7 @@ class Import extends Model
 
     public function scopeComDocumentosEssenciaisPendentes($query)
     {
-        return $query->whereHas('documents', function($q) {
+        return $query->whereHas('documents', function ($q) {
             $q->whereIn('tipo_documento', ['Invoice', 'Packing List', 'BL', 'Mercante'])
               ->where('status', '!=', 'recebido_ok');
         });
@@ -159,7 +122,7 @@ class Import extends Model
 
     public function scopeComPagamentosObrigatoriosPendentes($query)
     {
-        return $query->whereHas('costs', function($q) {
+        return $query->whereHas('costs', function ($q) {
             $q->whereIn('tipo_custo', ['frete_internacional', 'marinha_mercante', 'armazenagem_porto'])
               ->where('status_pagamento', 'pendente');
         });
@@ -167,16 +130,10 @@ class Import extends Model
 
     public function scopeComFreteRodoviarioPendente($query)
     {
-        return $query->whereHas('costs', function($q) {
+        return $query->whereHas('costs', function ($q) {
             $q->where('tipo_custo', 'frete_rodoviario')
               ->where('status_pagamento', 'pendente');
         });
-    }
-
-    public function scopeAltoValor($query)
-    {
-        return $query->whereNotNull('valor_fatura')
-                    ->whereNotNull('moeda');
     }
 
     public function temDocumentosEssenciaisPendentes(): bool
@@ -213,7 +170,7 @@ class Import extends Model
 
     public function temPendencias(): bool
     {
-        return $this->temDocumentosEssenciaisPendentes() || 
+        return $this->temDocumentosEssenciaisPendentes() ||
                $this->temPagamentosObrigatoriosPendentes() ||
                $this->costs()->where('tipo_custo', 'frete_rodoviario')->where('status_pagamento', 'pendente')->exists();
     }

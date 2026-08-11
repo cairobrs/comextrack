@@ -49,22 +49,6 @@ class ImportCost extends Model
         };
     }
 
-    // Retorna o valor convertido para reais usando a taxa de câmbio do processo
-    public function getValorEmReaisAttribute(): ?float
-    {
-        if ($this->valor === null) {
-            return null;
-        }
-
-        if ($this->moeda === 'BRL') {
-            return $this->valor;
-        }
-
-        $import = $this->import;
-        $taxa = $import?->taxa_cambio ?? 1;
-        return $this->valor * $taxa;
-    }
-
     public static function statusPagamentoOptions(): array
     {
         return [

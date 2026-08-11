@@ -27,16 +27,12 @@ class ImportTest extends TestCase
         $response = $this->actingAs($user)->post(route('imports.store'), [
             'numero_processo' => 'PROC-999888',
             'client_id' => $client->id,
-            'responsavel_interno_id' => null,
             'modal' => 'maritimo',
             'ncm_principal' => '1234.56.78',
             'descricao_mercadoria' => 'Mercadoria teste',
             'pais_origem' => 'China',
-            'porto_origem' => null,
-            'porto_destino' => null,
             'valor_fatura' => '1000.50',
             'moeda' => 'USD',
-            'taxa_cambio' => '5.2500',
             'data_abertura' => '2025-06-01',
             'data_prevista_chegada' => null,
             'status_atual' => 'aberto',
@@ -63,16 +59,12 @@ class ImportTest extends TestCase
         $this->actingAs($user)->put(route('imports.update', $import), [
             'numero_processo' => $import->numero_processo,
             'client_id' => $import->client_id,
-            'responsavel_interno_id' => null,
             'modal' => $import->modal,
             'ncm_principal' => '8765.43.21',
             'descricao_mercadoria' => $import->descricao_mercadoria,
             'pais_origem' => $import->pais_origem,
-            'porto_origem' => $import->porto_origem,
-            'porto_destino' => $import->porto_destino,
             'valor_fatura' => $import->valor_fatura,
             'moeda' => $import->moeda ?? 'USD',
-            'taxa_cambio' => $import->taxa_cambio ?? 1,
             'data_abertura' => $import->data_abertura->format('Y-m-d'),
             'data_prevista_chegada' => $import->data_prevista_chegada?->format('Y-m-d'),
             'status_atual' => $import->status_atual,
@@ -99,14 +91,12 @@ class ImportTest extends TestCase
             'numero_processo' => 'PROC-111222',
             'status_atual' => 'aberto',
             'moeda' => 'BRL',
-            'taxa_cambio' => 1,
         ]);
         Import::factory()->create([
             'client_id' => $clientB->id,
             'numero_processo' => 'PROC-333444',
             'status_atual' => 'concluido',
             'moeda' => 'BRL',
-            'taxa_cambio' => 1,
         ]);
 
         $this->actingAs($user)

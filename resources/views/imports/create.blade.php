@@ -27,19 +27,6 @@
                             </div>
 
                             <div>
-                                <x-input-label for="responsavel_interno_id" :value="__('Responsável Interno')" />
-                                <select id="responsavel_interno_id" name="responsavel_interno_id" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
-                                    <option value="">Sem responsável definido</option>
-                                    @foreach($users as $user)
-                                        <option value="{{ $user->id }}" {{ old('responsavel_interno_id') == $user->id ? 'selected' : '' }}>
-                                            {{ $user->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                <x-input-error :messages="$errors->get('responsavel_interno_id')" class="mt-2" />
-                            </div>
-
-                            <div>
                                 <x-input-label for="numero_processo" :value="__('Número do Processo')" />
                                 <x-text-input id="numero_processo" class="block mt-1 w-full" type="text" name="numero_processo" :value="old('numero_processo')" required />
                                 <x-input-error :messages="$errors->get('numero_processo')" class="mt-2" />
@@ -98,18 +85,6 @@
                             </div>
 
                             <div>
-                                <x-input-label for="porto_origem" :value="__('Porto de Origem')" />
-                                <x-text-input id="porto_origem" class="block mt-1 w-full" type="text" name="porto_origem" :value="old('porto_origem')" />
-                                <x-input-error :messages="$errors->get('porto_origem')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="porto_destino" :value="__('Porto de Destino')" />
-                                <x-text-input id="porto_destino" class="block mt-1 w-full" type="text" name="porto_destino" :value="old('porto_destino')" />
-                                <x-input-error :messages="$errors->get('porto_destino')" class="mt-2" />
-                            </div>
-
-                            <div>
                                 <x-input-label for="valor_fatura" :value="__('Valor da Fatura')" />
                                 <x-text-input id="valor_fatura" class="block mt-1 w-full" type="text" name="valor_fatura_display" :value="old('valor_fatura') ? number_format((float)old('valor_fatura'), 2, ',', '.') : ''" placeholder="0,00" />
                                 <input type="hidden" id="valor_fatura_hidden" name="valor_fatura" value="{{ old('valor_fatura') }}" />
@@ -118,7 +93,7 @@
 
                             <div>
                                 <x-input-label for="moeda" :value="__('Moeda')" />
-                                <select id="moeda" name="moeda" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" onchange="handleMoedaChange()">
+                                <select id="moeda" name="moeda" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
                                     <option value="BRL" {{ old('moeda', 'USD') == 'BRL' ? 'selected' : '' }}>BRL - Real Brasileiro</option>
                                     <option value="USD" {{ old('moeda', 'USD') == 'USD' ? 'selected' : '' }}>USD - Dólar Americano</option>
                                     <option value="EUR" {{ old('moeda', 'USD') == 'EUR' ? 'selected' : '' }}>EUR - Euro</option>
@@ -132,14 +107,6 @@
                                     <option value="MXN" {{ old('moeda', 'USD') == 'MXN' ? 'selected' : '' }}>MXN - Peso Mexicano</option>
                                 </select>
                                 <x-input-error :messages="$errors->get('moeda')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="taxa_cambio" :value="__('Taxa de câmbio (1 moeda = X BRL)')" />
-                                <x-text-input id="taxa_cambio" class="block mt-1 w-full" type="text" name="taxa_cambio_display" :value="old('taxa_cambio') ? number_format((float)old('taxa_cambio'), 4, ',', '.') : (old('moeda', 'USD') == 'BRL' ? '1,0000' : '')" placeholder="Ex.: 5,40 se 1 USD = 5,40 BRL" />
-                                <input type="hidden" id="taxa_cambio_hidden" name="taxa_cambio" value="{{ old('taxa_cambio', old('moeda', 'USD') == 'BRL' ? '1.0000' : '') }}" />
-                                <p class="mt-1 text-sm text-gray-500">Obrigatório quando a moeda não for BRL</p>
-                                <x-input-error :messages="$errors->get('taxa_cambio')" class="mt-2" />
                             </div>
 
                             <div>
@@ -229,64 +196,6 @@
                         const displayValue = valorFaturaInput.value;
                         const numericValue = displayValue.replace(/\./g, '').replace(',', '.');
                         valorFaturaHidden.value = numericValue || '';
-                    });
-                }
-            }
-
-            // Formatação do campo de taxa de câmbio
-            const taxaCambioInput = document.getElementById('taxa_cambio');
-            const taxaCambioHidden = document.getElementById('taxa_cambio_hidden');
-            const moedaSelect = document.getElementById('moeda');
-
-            if (taxaCambioInput && taxaCambioHidden && moedaSelect) {
-                // Formatação de entrada
-                taxaCambioInput.addEventListener('input', function(e) {
-                    let value = e.target.value;
-                    value = value.replace(/[^\d,]/g, '');
-                    const parts = value.split(',');
-                    if (parts.length > 2) {
-                        value = parts[0] + ',' + parts.slice(1).join('');
-                    }
-                    if (parts.length === 2 && parts[1].length > 4) {
-                        value = parts[0] + ',' + parts[1].substring(0, 4);
-                    }
-                    if (parts.length > 0) {
-                        const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-                        value = parts.length > 1 ? integerPart + ',' + parts[1] : integerPart;
-                    }
-                    e.target.value = value;
-                    const numericValueForSubmit = value.replace(/\./g, '').replace(',', '.');
-                    taxaCambioHidden.value = numericValueForSubmit || '';
-                });
-
-                // Função para lidar com mudança de moeda
-                window.handleMoedaChange = function() {
-                    const moeda = moedaSelect.value;
-                    if (moeda === 'BRL') {
-                        taxaCambioInput.value = '1,0000';
-                        taxaCambioHidden.value = '1.0000';
-                        taxaCambioInput.disabled = true;
-                        taxaCambioInput.classList.add('bg-gray-100');
-                    } else {
-                        taxaCambioInput.disabled = false;
-                        taxaCambioInput.classList.remove('bg-gray-100');
-                        if (!taxaCambioInput.value) {
-                            taxaCambioInput.value = '';
-                            taxaCambioHidden.value = '';
-                        }
-                    }
-                }
-
-                // Executar ao carregar a página
-                handleMoedaChange();
-
-                // Ao enviar o formulário
-                const form = taxaCambioInput.closest('form');
-                if (form) {
-                    form.addEventListener('submit', function(e) {
-                        const displayValue = taxaCambioInput.value;
-                        const numericValue = displayValue.replace(/\./g, '').replace(',', '.');
-                        taxaCambioHidden.value = numericValue || '';
                     });
                 }
             }
