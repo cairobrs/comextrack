@@ -18,15 +18,9 @@
                             <h3 class="text-lg font-semibold mb-4">Informações do Cliente</h3>
                             <dl class="space-y-2">
                                 <div>
-                                    <dt class="text-sm font-medium text-gray-700">Nome Fantasia</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $client->nome_fantasia }}</dd>
+                                    <dt class="text-sm font-medium text-gray-700">Nome do cliente</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $client->nome_cliente }}</dd>
                                 </div>
-                                @if($client->razao_social)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-700">Razão Social</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $client->razao_social }}</dd>
-                                </div>
-                                @endif
                                 @if($client->cnpj)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">CNPJ</dt>

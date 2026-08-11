@@ -14,15 +14,9 @@
 
                         <div class="grid grid-cols-1 gap-6">
                             <div>
-                                <x-input-label for="nome_fantasia" :value="__('Nome Fantasia')" />
-                                <x-text-input id="nome_fantasia" class="block mt-1 w-full" type="text" name="nome_fantasia" :value="old('nome_fantasia')" required autofocus />
-                                <x-input-error :messages="$errors->get('nome_fantasia')" class="mt-2" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="razao_social" :value="__('Razão Social')" />
-                                <x-text-input id="razao_social" class="block mt-1 w-full" type="text" name="razao_social" :value="old('razao_social')" />
-                                <x-input-error :messages="$errors->get('razao_social')" class="mt-2" />
+                                <x-input-label for="nome_cliente" :value="__('Nome do cliente')" />
+                                <x-text-input id="nome_cliente" class="block mt-1 w-full" type="text" name="nome_cliente" :value="old('nome_cliente')" required autofocus />
+                                <x-input-error :messages="$errors->get('nome_cliente')" class="mt-2" />
                             </div>
 
                             <div>

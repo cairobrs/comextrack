@@ -32,8 +32,7 @@ class ClientTest extends TestCase
         $user = $this->actingUser();
 
         $response = $this->actingAs($user)->post(route('clients.store'), [
-            'nome_fantasia' => 'Empresa Teste LTDA',
-            'razao_social' => 'Empresa Teste Razão Social',
+            'nome_cliente' => 'Empresa Teste LTDA',
             'cnpj' => '12345678000199',
             'email' => 'contato@empresa.test',
             'nome_responsavel' => 'João Silva',
@@ -43,7 +42,7 @@ class ClientTest extends TestCase
 
         $response->assertRedirect(route('clients.index'));
         $this->assertDatabaseHas('clients', [
-            'nome_fantasia' => 'Empresa Teste LTDA',
+            'nome_cliente' => 'Empresa Teste LTDA',
             'email' => 'contato@empresa.test',
         ]);
     }
@@ -51,13 +50,12 @@ class ClientTest extends TestCase
     public function test_authenticated_user_can_edit_and_delete_client(): void
     {
         $user = $this->actingUser();
-        $client = Client::factory()->create(['nome_fantasia' => 'Antigo']);
+        $client = Client::factory()->create(['nome_cliente' => 'Antigo']);
 
         $this->actingAs($user)->get(route('clients.edit', $client))->assertOk();
 
         $this->actingAs($user)->put(route('clients.update', $client), [
-            'nome_fantasia' => 'Novo Nome',
-            'razao_social' => null,
+            'nome_cliente' => 'Novo Nome',
             'cnpj' => null,
             'email' => null,
             'nome_responsavel' => null,
@@ -67,21 +65,21 @@ class ClientTest extends TestCase
 
         $this->assertDatabaseHas('clients', [
             'id' => $client->id,
-            'nome_fantasia' => 'Novo Nome',
+            'nome_cliente' => 'Novo Nome',
         ]);
 
         $this->actingAs($user)->delete(route('clients.destroy', $client))->assertRedirect(route('clients.index'));
         $this->assertDatabaseMissing('clients', ['id' => $client->id]);
     }
 
-    public function test_store_client_requires_nome_fantasia(): void
+    public function test_store_client_requires_nome_cliente(): void
     {
         $user = $this->actingUser();
 
         $response = $this->actingAs($user)->post(route('clients.store'), [
-            'nome_fantasia' => '',
+            'nome_cliente' => '',
         ]);
 
-        $response->assertSessionHasErrors('nome_fantasia');
+        $response->assertSessionHasErrors('nome_cliente');
     }
 }

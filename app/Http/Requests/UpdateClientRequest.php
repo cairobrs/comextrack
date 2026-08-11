@@ -13,8 +13,7 @@ class UpdateClientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nome_fantasia' => 'required|string|max:255',
-            'razao_social' => 'nullable|string|max:255',
+            'nome_cliente' => 'required|string|max:255',
             'cnpj' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255',
             'nome_responsavel' => 'nullable|string|max:255',

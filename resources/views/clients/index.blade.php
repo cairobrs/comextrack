@@ -25,7 +25,7 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nome Fantasia</th>
+                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Nome do cliente</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">CNPJ</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">Contato</th>
                                     <th class="px-4 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">E-mail</th>
@@ -35,7 +35,7 @@
                             <tbody class="bg-white divide-y divide-gray-200">
                                 @forelse ($clients as $client)
                                     <tr>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $client->nome_fantasia }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $client->nome_cliente }}</td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $client->cnpj ?? '-' }}</td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
                                             @if($client->nome_responsavel || $client->telefone_responsavel)
