@@ -91,8 +91,8 @@ class ImportTest extends TestCase
     public function test_import_index_filters_work(): void
     {
         $user = $this->actingUser();
-        $clientA = Client::factory()->create(['nome_fantasia' => 'Cliente A']);
-        $clientB = Client::factory()->create(['nome_fantasia' => 'Cliente B']);
+        $clientA = Client::factory()->create(['nome_cliente' => 'Cliente A']);
+        $clientB = Client::factory()->create(['nome_cliente' => 'Cliente B']);
 
         $importA = Import::factory()->create([
             'client_id' => $clientA->id,

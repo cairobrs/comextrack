@@ -44,7 +44,7 @@ class ImportController extends Controller
         }
 
         $imports = $query->paginate(10)->withQueryString();
-        $clients = Client::orderBy('nome_fantasia')->get();
+        $clients = Client::orderBy('nome_cliente')->get();
 
         return view('imports.index', compact('imports', 'clients', 'hasSearch'));
     }
@@ -53,7 +53,7 @@ class ImportController extends Controller
     {
         $this->authorize('create', Import::class);
 
-        $clients = Client::orderBy('nome_fantasia')->get();
+        $clients = Client::orderBy('nome_cliente')->get();
         $users = User::orderBy('name')->get();
 
         return view('imports.create', compact('clients', 'users'));
@@ -82,7 +82,7 @@ class ImportController extends Controller
     {
         $this->authorize('update', $import);
 
-        $clients = Client::orderBy('nome_fantasia')->get();
+        $clients = Client::orderBy('nome_cliente')->get();
         $users = User::orderBy('name')->get();
 
         return view('imports.edit', compact('import', 'clients', 'users'));

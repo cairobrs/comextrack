@@ -51,7 +51,7 @@
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">Cliente</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $import->client->nome_fantasia }}</dd>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $import->client->nome_cliente }}</dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">Responsável Interno</dt>

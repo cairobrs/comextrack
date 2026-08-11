@@ -29,7 +29,7 @@
                                 <option value="">Todos os clientes</option>
                                 @foreach($clients as $client)
                                     <option value="{{ $client->id }}" {{ request('client_id') == $client->id ? 'selected' : '' }}>
-                                        {{ $client->nome_fantasia }}
+                                        {{ $client->nome_cliente }}
                                     </option>
                                 @endforeach
                             </select>
@@ -88,7 +88,7 @@
                                                 </span>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $import->client->nome_fantasia }}</td>
+                                        <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $import->client->nome_cliente }}</td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ ucfirst($import->modal) }}</td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ ucfirst(str_replace('_', ' ', $import->status_atual)) }}</td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $import->data_prevista_chegada ? $import->data_prevista_chegada->format('d/m/Y') : '-' }}</td>
