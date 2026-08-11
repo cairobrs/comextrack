@@ -75,6 +75,10 @@
                                     <dt class="text-sm font-medium text-gray-700">Descrição da Mercadoria</dt>
                                     <dd class="mt-1 text-sm text-gray-900">{{ $import->descricao_mercadoria }}</dd>
                                 </div>
+                                <div>
+                                    <dt class="text-sm font-medium text-gray-700">NCM principal</dt>
+                                    <dd class="mt-1 text-sm text-gray-900">{{ $import->ncm_principal ?: '—' }}</dd>
+                                </div>
                             </dl>
                         </div>
 
@@ -179,6 +183,7 @@
                                     <tr>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documento</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arquivo</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                                     </tr>
@@ -198,6 +203,15 @@
                                                     <span class="text-gray-700 font-medium">{{ $document->status_label }}</span>
                                                 @else
                                                     <span class="text-gray-500">{{ $document->status_label }}</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">
+                                                @if($document->arquivo)
+                                                    <a href="{{ route('documents.download', $document) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                        Baixar arquivo
+                                                    </a>
+                                                @else
+                                                    —
                                                 @endif
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-700">
@@ -261,7 +275,12 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de Custo</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status de Pagamento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moeda</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pagamento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                                     </tr>
                                 </thead>
@@ -269,6 +288,10 @@
                                     @foreach($custosFase2 as $cost)
                                         <tr>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cost->tipo_custo_label }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->valor !== null ? number_format($cost->valor, 2, ',', '.') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->moeda ?? '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->data_vencimento ? $cost->data_vencimento->format('d/m/Y') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->data_pagamento ? $cost->data_pagamento->format('d/m/Y') : '—' }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm">
                                                 @if($cost->status_pagamento == 'pago')
                                                     <span class="text-green-700 font-medium">{{ $cost->status_pagamento_label }}</span>
@@ -276,9 +299,10 @@
                                                     <span class="text-yellow-700 font-medium">{{ $cost->status_pagamento_label }}</span>
                                                 @endif
                                             </td>
+                                            <td class="px-4 py-3 text-sm text-gray-700 max-w-xs truncate" title="{{ $cost->observacoes }}">{{ $cost->observacoes ? Str::limit($cost->observacoes, 40) : '—' }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
                                                 <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    Atualizar pagamento
+                                                    Editar custo
                                                 </a>
                                             </td>
                                         </tr>
@@ -370,7 +394,12 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo de Custo</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status de Pagamento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moeda</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pagamento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
                                     </tr>
                                 </thead>
@@ -378,6 +407,10 @@
                                     @foreach($custosFase3 as $cost)
                                         <tr>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cost->tipo_custo_label }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->valor !== null ? number_format($cost->valor, 2, ',', '.') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->moeda ?? '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->data_vencimento ? $cost->data_vencimento->format('d/m/Y') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->data_pagamento ? $cost->data_pagamento->format('d/m/Y') : '—' }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm">
                                                 @if($cost->status_pagamento == 'pago')
                                                     <span class="text-green-700 font-medium">{{ $cost->status_pagamento_label }}</span>
@@ -385,9 +418,10 @@
                                                     <span class="text-yellow-700 font-medium">{{ $cost->status_pagamento_label }}</span>
                                                 @endif
                                             </td>
+                                            <td class="px-4 py-3 text-sm text-gray-700 max-w-xs truncate" title="{{ $cost->observacoes }}">{{ $cost->observacoes ? Str::limit($cost->observacoes, 40) : '—' }}</td>
                                             <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
                                                 <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    Atualizar pagamento
+                                                    Editar custo
                                                 </a>
                                             </td>
                                         </tr>

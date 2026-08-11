@@ -10,6 +10,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('dashboard');
+    }
+
     return view('welcome');
 });
 
@@ -27,6 +31,8 @@ Route::middleware('auth')->group(function () {
         ->name('imports.export');
     Route::resource('imports.steps', ImportStepController::class)->shallow();
 
+    Route::get('documents/{document}/download', [ImportDocumentController::class, 'download'])
+        ->name('documents.download');
     Route::resource('documents', ImportDocumentController::class)
         ->only(['edit', 'update']);
 

@@ -67,6 +67,7 @@ class ImportProcessExport
         
         $data = [
             'Número do Processo' => $this->import->numero_processo,
+            'NCM principal' => $this->import->ncm_principal ?? '-',
             'Cliente' => $this->import->client->nome_fantasia ?? '-',
             'Modal' => ucfirst($this->import->modal ?? '-'),
             'País de Origem' => $this->import->pais_origem ?? '-',

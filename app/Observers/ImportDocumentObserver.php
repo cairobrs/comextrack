@@ -26,14 +26,22 @@ class ImportDocumentObserver
             return;
         }
 
-        $statusAnteriorProcesso = $import->status_atual;
+        if ($importDocument->tipo_documento === 'BL'
+            && $importDocument->wasChanged('status')
+            && $importDocument->status === 'recebido_ok') {
+            $import->refresh();
+            $statusAnteriorProcesso = $import->status_atual;
 
-        if ($importDocument->tipo_documento === 'BL' && $importDocument->wasChanged('status')) {
-            $import->updateQuietly(['status_atual' => 'em_transito']);
-            if ($import->wasChanged('status_atual')) {
-                ImportLogService::logStatusProcessoAlterado($import, $statusAnteriorProcesso, 'em_transito', true);
+            if (! in_array($statusAnteriorProcesso, ['concluido', 'cancelado'], true)) {
+                $import->updateQuietly(['status_atual' => 'em_transito']);
+                $import->refresh();
+                if ($statusAnteriorProcesso !== 'em_transito') {
+                    ImportLogService::logStatusProcessoAlterado($import, $statusAnteriorProcesso, 'em_transito', true);
+                }
             }
         }
+
+        $import->refresh();
 
         $statusManager = new ImportStatusManager();
         $statusManager->evaluateAndUpdateStatus($import);

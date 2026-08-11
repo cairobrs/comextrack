@@ -18,6 +18,7 @@ class StoreImportRequest extends FormRequest
             'client_id' => 'required|exists:clients,id',
             'responsavel_interno_id' => 'nullable|exists:users,id',
             'modal' => 'required|in:maritimo,aereo,rodoviario',
+            'ncm_principal' => 'nullable|string|max:10',
             'descricao_mercadoria' => 'required|string|max:255',
             'pais_origem' => 'nullable|string|max:255',
             'porto_origem' => 'nullable|string|max:255',

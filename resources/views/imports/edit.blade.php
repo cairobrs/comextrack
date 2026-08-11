@@ -46,6 +46,35 @@
                                 <x-input-error :messages="$errors->get('numero_processo')" class="mt-2" />
                             </div>
 
+                            <div
+                                x-data="{
+                                    ncm: @js(old('ncm_principal', $import->ncm_principal)),
+                                    applyNcmMask() {
+                                        let d = String(this.ncm ?? '').replace(/\D/g, '').slice(0, 8);
+                                        let f = '';
+                                        if (d.length >= 1) f = d.slice(0, 4);
+                                        if (d.length > 4) f += '.' + d.slice(4, 6);
+                                        if (d.length > 6) f += '.' + d.slice(6, 8);
+                                        this.ncm = f;
+                                    }
+                                }"
+                                x-init="if (ncm) applyNcmMask()"
+                            >
+                                <x-input-label for="ncm_principal" :value="__('NCM principal')" />
+                                <x-text-input
+                                    id="ncm_principal"
+                                    class="block mt-1 w-full"
+                                    type="text"
+                                    name="ncm_principal"
+                                    x-model="ncm"
+                                    @input="applyNcmMask()"
+                                    maxlength="10"
+                                    placeholder="0000.00.00"
+                                />
+                                <p class="mt-1 text-sm text-gray-500">Formato: 0000.00.00 (opcional)</p>
+                                <x-input-error :messages="$errors->get('ncm_principal')" class="mt-2" />
+                            </div>
+
                             <div>
                                 <x-input-label for="modal" :value="__('Modal')" />
                                 <select id="modal" name="modal" class="block mt-1 w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>

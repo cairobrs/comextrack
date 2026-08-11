@@ -22,7 +22,8 @@ class ClientFactory extends Factory
             'cnpj' => fake()->optional()->numerify('##############'),
             'email' => fake()->optional()->companyEmail(),
             'telefone' => fake()->optional()->phoneNumber(),
-            'contato_responsavel' => fake()->optional()->name(),
+            'nome_responsavel' => fake()->optional()->name(),
+            'telefone_responsavel' => fake()->optional()->phoneNumber(),
             'observacoes' => fake()->optional()->text(),
         ];
     }

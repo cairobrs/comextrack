@@ -10,11 +10,15 @@ class ImportStepController extends Controller
 {
     public function create(Import $import)
     {
+        $this->authorize('create', ImportStep::class);
+
         return view('imports.steps.create', compact('import'));
     }
 
     public function store(Request $request, Import $import)
     {
+        $this->authorize('create', ImportStep::class);
+
         $validated = $request->validate([
             'nome_etapa' => 'required|string|max:255',
             'data_prevista' => 'nullable|date',
@@ -32,11 +36,15 @@ class ImportStepController extends Controller
 
     public function edit(ImportStep $step)
     {
+        $this->authorize('update', $step);
+
         return view('imports.steps.edit', compact('step'));
     }
 
     public function update(Request $request, ImportStep $step)
     {
+        $this->authorize('update', $step);
+
         $validated = $request->validate([
             'nome_etapa' => 'required|string|max:255',
             'data_prevista' => 'nullable|date',
@@ -54,6 +62,8 @@ class ImportStepController extends Controller
 
     public function destroy(ImportStep $step)
     {
+        $this->authorize('delete', $step);
+
         $import = $step->import;
         $step->delete();
 

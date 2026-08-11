@@ -8,9 +8,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalHighValueImports = Import::altoValor()
-            ->get()
-            ->filter(fn($import) => $import->is_high_value)
+        $totalHighValueImports = Import::query()
+            ->whereNotNull('valor_fatura')
+            ->where(function ($query) {
+                $query->where(function ($q) {
+                    $q->where('moeda', 'BRL')
+                        ->where('valor_fatura', '>', 500000);
+                })->orWhere(function ($q) {
+                    $q->where(function ($q2) {
+                        $q2->whereNull('moeda')->orWhere('moeda', '!=', 'BRL');
+                    })
+                        ->whereRaw('(valor_fatura * COALESCE(taxa_cambio, 1)) > ?', [500000]);
+                });
+            })
             ->count();
 
         $totalPendingImports = Import::where(function($query) {

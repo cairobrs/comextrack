@@ -21,7 +21,7 @@
                         </h3>
                     </div>
 
-                    <form method="POST" action="{{ route('documents.update', $document) }}">
+                    <form method="POST" action="{{ route('documents.update', $document) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
 
@@ -43,6 +43,16 @@
                                     @endforeach
                                 </select>
                                 <x-input-error :messages="$errors->get('status')" class="mt-2" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="arquivo" :value="__('Arquivo anexo')" />
+                                @if($document->arquivo)
+                                    <p class="mt-1 text-sm text-gray-600">Arquivo atual: <span class="font-mono text-xs">{{ basename($document->arquivo) }}</span></p>
+                                @endif
+                                <input id="arquivo" type="file" name="arquivo" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls,.doc,.docx,application/pdf,image/*" class="block mt-1 w-full text-sm text-gray-700" />
+                                <p class="mt-1 text-sm text-gray-500">PDF, imagens, Excel ou Word. Máx. 10 MB. Substitui o arquivo anterior se houver.</p>
+                                <x-input-error :messages="$errors->get('arquivo')" class="mt-2" />
                             </div>
 
                             <div>
