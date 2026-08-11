@@ -82,11 +82,6 @@
                                     <tr>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">
                                             {{ $import->numero_processo }}
-                                            @if($import->is_high_value)
-                                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-300">
-                                                    ⚠️ ALTO VALOR
-                                                </span>
-                                            @endif
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $import->client->nome_cliente }}</td>
                                         <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ ucfirst($import->modal) }}</td>

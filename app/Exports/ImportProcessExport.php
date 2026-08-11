@@ -17,7 +17,6 @@ class ImportProcessExport
     {
         $this->import = $import->load([
             'client',
-            'responsavelInterno',
             'documents',
             'costs',
             'steps',
@@ -71,14 +70,9 @@ class ImportProcessExport
             'Cliente' => $this->import->client->nome_cliente ?? '-',
             'Modal' => ucfirst($this->import->modal ?? '-'),
             'País de Origem' => $this->import->pais_origem ?? '-',
-            'Porto de Origem' => $this->import->porto_origem ?? '-',
-            'Porto de Destino' => $this->import->porto_destino ?? '-',
             'Valor da Fatura' => $this->import->valor_fatura ? number_format($this->import->valor_fatura, 2, ',', '.') : '-',
             'Moeda' => $this->import->moeda ?? '-',
-            'Taxa de Câmbio' => $this->import->taxa_cambio ? number_format($this->import->taxa_cambio, 4, ',', '.') : '-',
-            'Valor Estimado em Reais' => $this->import->valor_fatura_em_reais ? 'R$ ' . number_format($this->import->valor_fatura_em_reais, 2, ',', '.') : '-',
             'Status Atual' => ucfirst(str_replace('_', ' ', $this->import->status_atual ?? '-')),
-            'Responsável Interno' => $this->import->responsavelInterno->name ?? '-',
             'Data de Abertura' => $this->import->data_abertura ? $this->import->data_abertura->format('d/m/Y') : '-',
             'Data Prevista de Chegada' => $this->import->data_prevista_chegada ? $this->import->data_prevista_chegada->format('d/m/Y') : '-',
             'Observações' => $this->import->observacoes ?? '-',
@@ -129,7 +123,7 @@ class ImportProcessExport
         $sheet = $spreadsheet->createSheet();
         $sheet->setTitle('Custos');
         
-        $headers = ['Tipo de Custo', 'Valor', 'Moeda', 'Valor em BRL', 'Status de Pagamento', 'Data de Pagamento', 'Observações'];
+        $headers = ['Tipo de Custo', 'Valor', 'Moeda', 'Status de Pagamento', 'Data de Pagamento', 'Observações'];
         $col = 'A';
         foreach ($headers as $header) {
             $sheet->setCellValue($col . '1', $header);
@@ -142,34 +136,21 @@ class ImportProcessExport
         
         $row = 2;
         foreach ($this->import->costs as $cost) {
-            $valorEmReais = null;
-            if ($cost->valor !== null) {
-                if ($cost->moeda === 'BRL') {
-                    $valorEmReais = $cost->valor;
-                } else {
-                    $taxa = $this->import->taxa_cambio ?? 1;
-                    $valorEmReais = $cost->valor * $taxa;
-                }
-            }
-            $valorEmReaisFormatado = $valorEmReais !== null ? 'R$ ' . number_format($valorEmReais, 2, ',', '.') : '-';
-            
             $sheet->setCellValue('A' . $row, $cost->tipo_custo_label);
             $sheet->setCellValue('B' . $row, $cost->valor ? number_format($cost->valor, 2, ',', '.') : '-');
             $sheet->setCellValue('C' . $row, $cost->moeda ?? '-');
-            $sheet->setCellValue('D' . $row, $valorEmReaisFormatado);
-            $sheet->setCellValue('E' . $row, $cost->status_pagamento_label);
-            $sheet->setCellValue('F' . $row, $cost->data_pagamento ? $cost->data_pagamento->format('d/m/Y') : '-');
-            $sheet->setCellValue('G' . $row, $cost->observacoes ?? '-');
+            $sheet->setCellValue('D' . $row, $cost->status_pagamento_label);
+            $sheet->setCellValue('E' . $row, $cost->data_pagamento ? $cost->data_pagamento->format('d/m/Y') : '-');
+            $sheet->setCellValue('F' . $row, $cost->observacoes ?? '-');
             $row++;
         }
-        
+
         $sheet->getColumnDimension('A')->setWidth(25);
         $sheet->getColumnDimension('B')->setWidth(15);
         $sheet->getColumnDimension('C')->setWidth(10);
-        $sheet->getColumnDimension('D')->setWidth(15);
-        $sheet->getColumnDimension('E')->setWidth(20);
-        $sheet->getColumnDimension('F')->setWidth(18);
-        $sheet->getColumnDimension('G')->setWidth(40);
+        $sheet->getColumnDimension('D')->setWidth(20);
+        $sheet->getColumnDimension('E')->setWidth(18);
+        $sheet->getColumnDimension('F')->setWidth(40);
     }
 
     protected function createEtapasSheet(Spreadsheet $spreadsheet): void

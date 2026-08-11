@@ -13,21 +13,6 @@
                 </div>
             @endif
 
-            @if($import->is_high_value)
-                <div class="mb-3 p-3 border-l-4 bg-red-50 border-red-500 rounded shadow-md">
-                    <p class="font-semibold text-red-800 text-base">
-                        ⚠️ Mercadoria acima de 500 mil reais
-                    </p>
-                    @if($import->valor_fatura_em_reais)
-                        <p class="text-red-700 mt-2 font-medium">
-                            Valor estimado em reais: <span class="text-red-900 font-bold">R$ {{ number_format($import->valor_fatura_em_reais, 2, ',', '.') }}</span>
-                        </p>
-                    @endif
-                    <p class="text-sm text-red-700 mt-2">
-                        <strong>Atenção:</strong> revisar com cuidado documentação, seguros e condições de embarque.
-                    </p>
-                </div>
-            @endif
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4">
                 <div class="p-4 text-gray-900">
@@ -52,16 +37,6 @@
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">Cliente</dt>
                                     <dd class="mt-1 text-sm text-gray-900">{{ $import->client->nome_cliente }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-700">Responsável Interno</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">
-                                        @if($import->responsavelInterno)
-                                            {{ $import->responsavelInterno->name }}
-                                        @else
-                                            <span class="text-gray-400">Não definido</span>
-                                        @endif
-                                    </dd>
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">Modal</dt>
@@ -91,36 +66,13 @@
                                     <dd class="mt-1 text-sm text-gray-900">{{ $import->pais_origem }}</dd>
                                 </div>
                                 @endif
-                                @if($import->porto_origem)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-700">Porto de Origem</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $import->porto_origem }}</dd>
-                                </div>
-                                @endif
-                                @if($import->porto_destino)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-700">Porto de Destino</dt>
-                                    <dd class="mt-1 text-sm text-gray-900">{{ $import->porto_destino }}</dd>
-                                </div>
-                                @endif
                                 @if($import->valor_fatura)
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">Valor da Fatura</dt>
                                     <dd class="mt-1 text-sm text-gray-900">
                                         {{ number_format($import->valor_fatura, 2, ',', '.') }} {{ $import->moeda }}
-                                        @if($import->taxa_cambio && $import->moeda !== 'BRL')
-                                            <br><span class="text-xs text-gray-500">Taxa usada: 1 {{ $import->moeda }} = {{ number_format($import->taxa_cambio, 4, ',', '.') }} BRL</span>
-                                        @endif
                                     </dd>
                                 </div>
-                                @if($import->valor_fatura_em_reais)
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-700">Valor Estimado em Reais</dt>
-                                    <dd class="mt-1 text-sm text-gray-900 font-semibold">
-                                        R$ {{ number_format($import->valor_fatura_em_reais, 2, ',', '.') }}
-                                    </dd>
-                                </div>
-                                @endif
                                 @endif
                                 <div>
                                     <dt class="text-sm font-medium text-gray-700">Data de Abertura</dt>
