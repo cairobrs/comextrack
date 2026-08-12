@@ -47,14 +47,8 @@
   - Todos os documentos essenciais estão OK
 
 ### Dashboard
-- Total de processos de alto valor
 - Total de processos com pendências (documentos ou custos)
 - Total de processos concluídos
-
-### Exportação para Excel
-- Exportação completa do processo em arquivo `.xlsx`
-- 5 abas organizadas: Resumo, Documentos, Custos, Etapas e Histórico
-- Formatação profissional com valores monetários e datas formatadas
 
 ### Histórico de Movimentações
 - Log automático de todas as alterações importantes
@@ -68,7 +62,6 @@
 - **Frontend**: Blade Templates + Tailwind CSS
 - **Banco de Dados**: SQLite (desenvolvimento) / MySQL/PostgreSQL (produção)
 - **Autenticação**: Laravel Breeze
-- **Exportação**: PhpOffice/PhpSpreadsheet
 - **PHP**: 8.2+
 
 ## Pré-requisitos
@@ -155,7 +148,6 @@ O sistema estará disponível em `http://127.0.0.1:8000`
 ```
 comex-track/
 ├── app/
-│   ├── Exports/          # Classes de exportação (Excel)
 │   ├── Http/
 │   │   ├── Controllers/  # Controllers da aplicação
 │   │   └── Requests/     # Form Requests (validações)

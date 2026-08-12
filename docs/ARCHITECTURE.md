@@ -37,7 +37,7 @@ O ComexTrack segue os princípios de **Clean Architecture** e **SOLID**, utiliza
 **Localização**: `app/Http/Controllers/`
 
 **Principais Controllers:**
-- `ImportController`: Gerencia processos de importação (CRUD + exportação)
+- `ImportController`: Gerencia processos de importação (CRUD)
 - `ClientController`: Gerencia clientes (CRUD)
 - `ImportStepController`: Gerencia etapas do processo
 - `ImportDocumentController`: Gerencia documentos
@@ -120,22 +120,6 @@ O ComexTrack segue os princípios de **Clean Architecture** e **SOLID**, utiliza
   - Avalia se processo pode mudar de status
 
 **Padrão**: Observers registrados no `AppServiceProvider`.
-
-### 6. Exports (Exportação de Dados)
-
-**Responsabilidade**: Gerar arquivos Excel com dados do processo.
-
-**Localização**: `app/Exports/`
-
-**Classes:**
-- `ImportProcessExport`: Gera arquivo `.xlsx` com 5 abas
-  - Resumo do Processo
-  - Documentos
-  - Custos
-  - Etapas
-  - Histórico
-
-**Tecnologia**: PhpOffice/PhpSpreadsheet
 
 ## Padrões de Design Utilizados
 
@@ -239,8 +223,7 @@ A arquitetura permite fácil extensão:
 
 1. **Novos Services**: Adicionar em `app/Services/`
 2. **Novos Observers**: Registrar no `AppServiceProvider`
-3. **Novos Exports**: Criar em `app/Exports/`
-4. **Novos Form Requests**: Criar em `app/Http/Requests/`
+3. **Novos Form Requests**: Criar em `app/Http/Requests/`
 
 ## Convenções de Nomenclatura
 
@@ -259,5 +242,5 @@ Possíveis evoluções arquiteturais:
 - DTOs para transferência de dados complexos
 - Repositories para abstração explícita de acesso a dados
 - Event System com eventos customizados para melhor desacoplamento
-- Queue Jobs para operações pesadas (exportação, notificações)
+- Queue Jobs para operações pesadas (notificações)
 

@@ -26,9 +26,6 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('clients', ClientController::class);
     Route::resource('imports', ImportController::class);
-    Route::get('imports/{import}/export', [ImportController::class, 'export'])
-        ->middleware('throttle:10,1')
-        ->name('imports.export');
     Route::resource('imports.steps', ImportStepController::class)->shallow();
 
     Route::get('documents/{document}/download', [ImportDocumentController::class, 'download'])

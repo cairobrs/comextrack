@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\ImportProcessExport;
 use App\Http\Requests\StoreImportRequest;
 use App\Http\Requests\UpdateImportRequest;
 use App\Models\Client;
@@ -103,14 +102,5 @@ class ImportController extends Controller
 
         return redirect()->route('imports.index')
             ->with('success', 'Processo de importação excluído com sucesso!');
-    }
-
-    public function export(Import $import)
-    {
-        $this->authorize('view', $import);
-
-        $export = new ImportProcessExport($import);
-
-        return $export->download();
     }
 }

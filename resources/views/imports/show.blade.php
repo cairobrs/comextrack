@@ -16,14 +16,8 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4">
                 <div class="p-4 text-gray-900">
-                    <div class="mb-3 flex justify-between items-center">
+                    <div class="mb-3">
                         <a href="{{ route('imports.index') }}" class="text-gray-700 hover:text-gray-900">← Voltar</a>
-                        <a href="{{ route('imports.export', $import) }}" style="background-color: #16a34a; color: #ffffff;" class="hover:bg-green-700 font-bold py-2 px-4 rounded shadow-md inline-flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: #ffffff;">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            Exportar para Excel
-                        </a>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
