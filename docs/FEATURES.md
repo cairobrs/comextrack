@@ -9,9 +9,8 @@
 5. [Gestão de Etapas](#gestão-de-etapas)
 6. [Automação de Status](#automação-de-status)
 7. [Dashboard](#dashboard)
-8. [Exportação para Excel](#exportação-para-excel)
-9. [Histórico de Movimentações](#histórico-de-movimentações)
-10. [Autenticação e Segurança](#autenticação-e-segurança)
+8. [Histórico de Movimentações](#histórico-de-movimentações)
+9. [Autenticação e Segurança](#autenticação-e-segurança)
 
 ---
 
@@ -255,55 +254,6 @@ ABERTO
 
 - Cards com números destacados
 - Links para listagens filtradas (futuro)
-
----
-
-## Exportação para Excel
-
-### Funcionalidades
-
-**Exportação Completa:**
-- Botão "Exportar para Excel" na tela de detalhes do processo
-- Gera arquivo `.xlsx` com nome: `processo_{numero_processo}.xlsx`
-
-**Estrutura do Arquivo:**
-- **Aba 1: Resumo do Processo**
-  - Dados gerais (número, cliente, modal, portos, etc.)
-  - Valores (fatura, moeda, taxa de câmbio, valor em reais)
-  - Status e responsável
-  - Datas e observações
-
-- **Aba 2: Documentos**
-  - Tipo de documento
-  - Status
-  - Observações
-
-- **Aba 3: Custos**
-  - Tipo de custo
-  - Valor e moeda
-  - Valor em BRL
-  - Status de pagamento
-  - Data de pagamento
-  - Observações
-
-- **Aba 4: Etapas**
-  - Nome da etapa
-  - Datas (prevista e realizada)
-  - Responsável
-  - Status
-  - Observações
-
-- **Aba 5: Histórico**
-  - Data e hora
-  - Tipo de evento
-  - Usuário
-  - Descrição
-
-**Formatação:**
-- Cabeçalhos em negrito com fundo cinza
-- Valores monetários formatados (R$ X.XXX,XX)
-- Datas formatadas (dd/mm/yyyy)
-- Largura automática das colunas
 
 ---
 

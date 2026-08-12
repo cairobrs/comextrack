@@ -140,16 +140,6 @@ Exibição do histórico na tela de detalhes do processo (últimos 20 logs).
 
 ---
 
-## 30/11/2025 - Exportação para Excel
-
-**Exportação completa do processo**
-
-Implementada exportação para Excel usando PhpOffice/PhpSpreadsheet. Arquivo gerado contém 5 abas: Resumo do Processo, Documentos, Custos, Etapas e Histórico.
-
-Botão "Exportar para Excel" adicionado na tela de detalhes. Arquivo baixado com nome `processo_{numero_processo}.xlsx`.
-
----
-
 ## 30/11/2025 - Form Requests e Validações
 
 **Centralização de validações**
@@ -210,7 +200,7 @@ Revisão completa de segurança do projeto identificando e corrigindo vulnerabil
 
 Validação de filtros no index de importações: client_id e status_atual agora são validados antes de uso, prevenindo manipulação de parâmetros. Proteção contra mass assignment: import_id removido dos dados validados antes de update em documentos, custos e etapas, garantindo que relacionamentos não sejam alterados indevidamente.
 
-Rate limiting adicionado na rota de exportação Excel (10 requisições por minuto) para prevenir abuso. Todas as rotas sensíveis já estavam protegidas por middleware auth. CSRF verificado e presente em todos os formulários. XSS prevenido através do uso correto de {{ }} nas views Blade.
+Todas as rotas sensíveis já estavam protegidas por middleware auth. CSRF verificado e presente em todos os formulários. XSS prevenido através do uso correto de {{ }} nas views Blade.
 
 ---
 
