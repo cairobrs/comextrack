@@ -19,26 +19,26 @@ class ImportCostPolicy
 
     public function create(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function update(User $user, ImportCost $importCost): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function delete(User $user, ImportCost $importCost): bool
     {
-        return true;
+        return $user->isAdmin() && $importCost->isAdicional();
     }
 
     public function restore(User $user, ImportCost $importCost): bool
     {
-        return true;
+        return false;
     }
 
     public function forceDelete(User $user, ImportCost $importCost): bool
     {
-        return true;
+        return false;
     }
 }

@@ -3,12 +3,29 @@
 namespace App\Observers;
 
 use App\Models\ImportCost;
-use App\Services\ImportStatusManager;
+use App\Models\Import;
 use App\Services\ImportLogService;
+use App\Services\ImportStatusManager;
 
-// Registra logs e avalia atualização de status após alterações em custos
 class ImportCostObserver
 {
+    public function created(ImportCost $importCost): void
+    {
+        if (! $importCost->isAdicional()) {
+            return;
+        }
+
+        ImportLogService::logCustoCriado($importCost);
+
+        $import = $importCost->import;
+        if (! $import) {
+            return;
+        }
+
+        $statusManager = new ImportStatusManager();
+        $statusManager->evaluateAndUpdateStatus($import);
+    }
+
     public function updated(ImportCost $importCost): void
     {
         if ($importCost->wasChanged('status_pagamento')) {
@@ -18,7 +35,28 @@ class ImportCostObserver
         }
 
         $import = $importCost->import;
-        if (!$import) {
+        if (! $import) {
+            return;
+        }
+
+        $statusManager = new ImportStatusManager();
+        $statusManager->evaluateAndUpdateStatus($import);
+    }
+
+    public function deleted(ImportCost $importCost): void
+    {
+        if (! $importCost->isAdicional()) {
+            return;
+        }
+
+        $importId = $importCost->import_id;
+        $nomeDespesa = $importCost->tipo_custo_label;
+        $costId = $importCost->id;
+
+        ImportLogService::logCustoExcluido($importId, $nomeDespesa, $costId);
+
+        $import = Import::find($importId);
+        if (! $import) {
             return;
         }
 

@@ -12,16 +12,16 @@ class ImportCostTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function actingUser(): User
+    private function adminUser(): User
     {
-        return User::factory()->create([
+        return User::factory()->admin()->create([
             'email_verified_at' => now(),
         ]);
     }
 
     public function test_cost_full_update_and_log(): void
     {
-        $user = $this->actingUser();
+        $user = $this->adminUser();
         $import = Import::factory()->create();
         $cost = $import->costs()->where('tipo_custo', 'frete_internacional')->first();
         $this->assertNotNull($cost);

@@ -60,6 +60,7 @@ class Import extends Model
             ];
             foreach ($costTypes as $tipo) {
                 $import->costs()->create([
+                    'categoria' => ImportCost::CATEGORIA_PADRAO,
                     'tipo_custo' => $tipo,
                     'valor' => null,
                     'moeda' => 'USD',
@@ -168,10 +169,19 @@ class Import extends Model
             ->get();
     }
 
+    public function temDespesasAdicionaisPendentes(): bool
+    {
+        return $this->costs()
+            ->where('categoria', ImportCost::CATEGORIA_ADICIONAL)
+            ->where('status_pagamento', 'pendente')
+            ->exists();
+    }
+
     public function temPendencias(): bool
     {
         return $this->temDocumentosEssenciaisPendentes() ||
                $this->temPagamentosObrigatoriosPendentes() ||
-               $this->costs()->where('tipo_custo', 'frete_rodoviario')->where('status_pagamento', 'pendente')->exists();
+               $this->costs()->where('tipo_custo', 'frete_rodoviario')->where('status_pagamento', 'pendente')->exists() ||
+               $this->temDespesasAdicionaisPendentes();
     }
 }

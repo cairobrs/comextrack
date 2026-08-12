@@ -33,8 +33,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('documents', ImportDocumentController::class)
         ->only(['edit', 'update']);
 
+    Route::get('imports/{import}/costs/create', [ImportCostController::class, 'create'])
+        ->name('imports.costs.create');
+    Route::post('imports/{import}/costs', [ImportCostController::class, 'store'])
+        ->name('imports.costs.store');
+
     Route::resource('costs', ImportCostController::class)
-        ->only(['edit', 'update']);
+        ->only(['edit', 'update', 'destroy']);
 });
 
 require __DIR__.'/auth.php';
