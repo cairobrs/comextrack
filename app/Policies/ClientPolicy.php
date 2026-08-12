@@ -9,36 +9,36 @@ class ClientPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function view(User $user, Client $client): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function create(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function update(User $user, Client $client): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function delete(User $user, Client $client): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function restore(User $user, Client $client): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function forceDelete(User $user, Client $client): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 }

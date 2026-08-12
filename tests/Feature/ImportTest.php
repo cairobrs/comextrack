@@ -14,7 +14,7 @@ class ImportTest extends TestCase
 
     private function actingUser(): User
     {
-        return User::factory()->create([
+        return User::factory()->admin()->create([
             'email_verified_at' => now(),
         ]);
     }

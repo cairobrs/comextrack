@@ -9,12 +9,12 @@ class ImportCostPolicy
 {
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function view(User $user, ImportCost $importCost): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     public function create(User $user): bool
