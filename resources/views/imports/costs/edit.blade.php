@@ -26,11 +26,25 @@
                         @method('PUT')
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="md:col-span-2">
-                                <x-input-label for="tipo_custo" :value="__('Tipo de Custo')" />
-                                <x-text-input id="tipo_custo" class="block mt-1 w-full bg-gray-100" type="text" value="{{ $cost->tipo_custo_label }}" disabled />
-                                <p class="mt-1 text-sm text-gray-500">Este campo não pode ser alterado</p>
-                            </div>
+                            @if($cost->isAdicional() && auth()->user()?->isAdmin())
+                                <div class="md:col-span-2">
+                                    <x-input-label for="nome" :value="__('Nome da despesa')" />
+                                    <x-text-input id="nome" class="block mt-1 w-full" type="text" name="nome" :value="old('nome', $cost->nome)" required />
+                                    <x-input-error :messages="$errors->get('nome')" class="mt-2" />
+                                </div>
+                            @elseif($cost->isAdicional())
+                                <div class="md:col-span-2">
+                                    <x-input-label for="nome" :value="__('Nome da despesa')" />
+                                    <x-text-input id="nome" class="block mt-1 w-full bg-gray-100" type="text" value="{{ $cost->nome }}" disabled />
+                                    <p class="mt-1 text-sm text-gray-500">Somente administradores podem alterar o nome</p>
+                                </div>
+                            @else
+                                <div class="md:col-span-2">
+                                    <x-input-label for="tipo_custo" :value="__('Tipo de Custo')" />
+                                    <x-text-input id="tipo_custo" class="block mt-1 w-full bg-gray-100" type="text" value="{{ $cost->tipo_custo_label }}" disabled />
+                                    <p class="mt-1 text-sm text-gray-500">Este campo não pode ser alterado</p>
+                                </div>
+                            @endif
 
                             <div>
                                 <x-input-label for="valor" :value="__('Valor')" />

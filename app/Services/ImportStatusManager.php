@@ -13,18 +13,28 @@ class ImportStatusManager
 {
     public function evaluateAndUpdateStatus(Import $import): void
     {
-        if (in_array($import->status_atual, ['concluido', 'cancelado'])) {
+        if ($import->status_atual === 'cancelado') {
             return;
         }
 
         $import->refresh();
+
+        if ($import->status_atual === 'concluido') {
+            if (! $this->meetsCompletionCriteria($import)) {
+                $import->updateQuietly(['status_atual' => 'em_desembaraco']);
+                ImportLogService::logStatusProcessoAlterado($import, 'concluido', 'em_desembaraco', true);
+            }
+
+            return;
+        }
+
         $statusAnterior = $import->status_atual;
 
         if ($this->allMandatoryCostsPaid($import)) {
             if ($import->status_atual !== 'em_desembaraco') {
                 $import->updateQuietly(['status_atual' => 'em_desembaraco']);
                 $import->refresh();
-                
+
                 if ($statusAnterior !== 'em_desembaraco') {
                     ImportLogService::logStatusProcessoAlterado($import, $statusAnterior, 'em_desembaraco', true);
                 }
@@ -37,11 +47,6 @@ class ImportStatusManager
                 $import->updateQuietly(['status_atual' => 'concluido']);
                 ImportLogService::logStatusProcessoAlterado($import, $statusAntesConclusao, 'concluido', true);
             }
-        } else {
-            if ($import->status_atual === 'concluido' && $this->allMandatoryCostsPaid($import)) {
-                $import->updateQuietly(['status_atual' => 'em_desembaraco']);
-                ImportLogService::logStatusProcessoAlterado($import, 'concluido', 'em_desembaraco', true);
-            }
         }
     }
 
@@ -51,15 +56,24 @@ class ImportStatusManager
             return false;
         }
 
-        if (!$this->allMandatoryCostsPaid($import)) {
+        return $this->meetsCompletionCriteria($import);
+    }
+
+    private function meetsCompletionCriteria(Import $import): bool
+    {
+        if (! $this->allMandatoryCostsPaid($import)) {
             return false;
         }
 
-        if (!$this->freightRoadPaid($import)) {
+        if (! $this->freightRoadPaid($import)) {
             return false;
         }
 
-        if (!$this->allEssentialDocumentsOk($import)) {
+        if (! $this->allEssentialDocumentsOk($import)) {
+            return false;
+        }
+
+        if (! $this->allAdditionalCostsPaid($import)) {
             return false;
         }
 
@@ -117,6 +131,14 @@ class ImportStatusManager
         }
 
         return $freightRoad->status_pagamento === 'pago';
+    }
+
+    private function allAdditionalCostsPaid(Import $import): bool
+    {
+        return ! $import->costs()
+            ->where('categoria', 'adicional')
+            ->where('status_pagamento', '!=', 'pago')
+            ->exists();
     }
 }
 

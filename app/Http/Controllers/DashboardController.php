@@ -13,8 +13,10 @@ class DashboardController extends Controller
                 $q->whereIn('tipo_documento', ['Invoice', 'Packing List', 'BL', 'Mercante'])
                   ->where('status', '!=', 'recebido_ok');
             })->orWhereHas('costs', function ($q) {
-                $q->whereIn('tipo_custo', ['frete_internacional', 'marinha_mercante', 'armazenagem_porto', 'frete_rodoviario'])
-                  ->where('status_pagamento', 'pendente');
+                $q->where(function ($costQuery) {
+                    $costQuery->whereIn('tipo_custo', ['frete_internacional', 'marinha_mercante', 'armazenagem_porto', 'frete_rodoviario'])
+                        ->orWhere('categoria', 'adicional');
+                })->where('status_pagamento', 'pendente');
             });
         })->count();
 

@@ -131,7 +131,9 @@
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arquivo</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @if(auth()->user()?->isAdmin())
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -227,7 +229,9 @@
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pagamento</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @if(auth()->user()?->isAdmin())
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -246,11 +250,13 @@
                                                 @endif
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-700 max-w-xs truncate" title="{{ $cost->observacoes }}">{{ $cost->observacoes ? Str::limit($cost->observacoes, 40) : '—' }}</td>
-                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    Editar custo
-                                                </a>
-                                            </td>
+                                            @if(auth()->user()?->isAdmin())
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                                                    <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                        Editar custo
+                                                    </a>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -346,7 +352,9 @@
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pagamento</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
-                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @if(auth()->user()?->isAdmin())
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
@@ -365,17 +373,98 @@
                                                 @endif
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-700 max-w-xs truncate" title="{{ $cost->observacoes }}">{{ $cost->observacoes ? Str::limit($cost->observacoes, 40) : '—' }}</td>
-                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
-                                                <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    Editar custo
-                                                </a>
-                                            </td>
+                                            @if(auth()->user()?->isAdmin())
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
+                                                    <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                        Editar custo
+                                                    </a>
+                                                </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>
                                 </table>
                             </div>
                         </div>
+                    @endif
+                </div>
+            </div>
+
+            @php
+                $despesasAdicionais = $import->costs->filter(fn ($cost) => $cost->isAdicional());
+                $temDespesaAdicionalPendente = $despesasAdicionais->contains(fn ($cost) => $cost->status_pagamento === 'pendente');
+            @endphp
+
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mb-4">
+                <div class="p-4 text-gray-900">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-base font-semibold">Despesas adicionais</h3>
+                        @if(auth()->user()?->isAdmin())
+                            <a href="{{ route('imports.costs.create', $import) }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md text-sm">
+                                Nova despesa adicional
+                            </a>
+                        @endif
+                    </div>
+                    <p class="text-xs text-gray-600 mb-3">Despesas personalizadas do processo. Todas devem estar pagas para conclusão.</p>
+
+                    @if($temDespesaAdicionalPendente)
+                        <div class="mb-3 p-2 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                            <p class="text-xs text-yellow-800">
+                                ⚠️ <strong>Despesas adicionais pendentes. Necessário quitar antes de concluir o processo.</strong>
+                            </p>
+                        </div>
+                    @endif
+
+                    @if($despesasAdicionais->count() > 0)
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Despesa</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moeda</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vencimento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pagamento</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observações</th>
+                                        @if(auth()->user()?->isAdmin())
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                                        @endif
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($despesasAdicionais as $cost)
+                                        <tr>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cost->tipo_custo_label }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->valor !== null ? number_format($cost->valor, 2, ',', '.') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->moeda ?? '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->data_vencimento ? $cost->data_vencimento->format('d/m/Y') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ $cost->data_pagamento ? $cost->data_pagamento->format('d/m/Y') : '—' }}</td>
+                                            <td class="px-4 py-3 whitespace-nowrap text-sm">
+                                                @if($cost->status_pagamento == 'pago')
+                                                    <span class="text-green-700 font-medium">{{ $cost->status_pagamento_label }}</span>
+                                                @else
+                                                    <span class="text-yellow-700 font-medium">{{ $cost->status_pagamento_label }}</span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-700 max-w-xs truncate" title="{{ $cost->observacoes }}">{{ $cost->observacoes ? Str::limit($cost->observacoes, 40) : '—' }}</td>
+                                            @if(auth()->user()?->isAdmin())
+                                                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium space-x-3">
+                                                    <a href="{{ route('costs.edit', $cost) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                                    <form action="{{ route('costs.destroy', $cost) }}" method="POST" class="inline" onsubmit="return confirm('Excluir esta despesa adicional?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-900">Excluir</button>
+                                                    </form>
+                                                </td>
+                                            @endif
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @else
+                        <p class="text-gray-700">Nenhuma despesa adicional cadastrada.</p>
                     @endif
                 </div>
             </div>

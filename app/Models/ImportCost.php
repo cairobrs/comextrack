@@ -7,9 +7,24 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ImportCost extends Model
 {
+    public const CATEGORIA_PADRAO = 'padrao';
+
+    public const CATEGORIA_ADICIONAL = 'adicional';
+
+    public const TIPO_ADICIONAL = 'adicional';
+
+    public const TIPOS_PADRAO = [
+        'frete_internacional',
+        'marinha_mercante',
+        'armazenagem_porto',
+        'frete_rodoviario',
+    ];
+
     protected $fillable = [
         'import_id',
+        'categoria',
         'tipo_custo',
+        'nome',
         'valor',
         'moeda',
         'status_pagamento',
@@ -29,8 +44,22 @@ class ImportCost extends Model
         return $this->belongsTo(Import::class);
     }
 
+    public function isPadrao(): bool
+    {
+        return $this->categoria === self::CATEGORIA_PADRAO;
+    }
+
+    public function isAdicional(): bool
+    {
+        return $this->categoria === self::CATEGORIA_ADICIONAL;
+    }
+
     public function getTipoCustoLabelAttribute(): string
     {
+        if ($this->isAdicional()) {
+            return $this->nome ?? 'Despesa adicional';
+        }
+
         return match ($this->tipo_custo) {
             'frete_internacional' => 'Frete Internacional',
             'marinha_mercante' => 'Marinha Mercante',
